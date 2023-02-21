@@ -2,11 +2,13 @@
 // https://opensource.org/licenses/MIT
 // Im using the macroquad crate https://github.com/not-fl3/macroquad/
 
-use broquinho;
-use broquinho::CanvasSize;
+mod game;
+use helper::*;
+
 use macroquad::prelude::*;
 
 const PADDLE_HEIGHT: f32 = 10.0;
+const BROQUINHO_SIZE: f32 = 25.0;
 
 const CANVAS_SIZE: CanvasSize = CanvasSize {
     HEIGHT: 600.0,
@@ -25,7 +27,7 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)] // Name of the app
 async fn main() {
-    let mut game: broquinho::Game = broquinho::Game::new(CANVAS_SIZE.clone());
+    let mut game: game::Game = game::Game::new(CANVAS_SIZE.clone());
     println!("Paddle x: {}", game.paddle.x);
     loop {
         clear_background(GRAY);
@@ -43,6 +45,16 @@ async fn main() {
             PADDLE_HEIGHT,
             RED,
         );
+
+        for broquinho in game.broquinho_vec.iter() {
+            draw_rectangle(
+                broquinho.get_pos_x() * BROQUINHO_SIZE,
+                broquinho.get_pos_y() * BROQUINHO_SIZE,
+                BROQUINHO_SIZE,
+                BROQUINHO_SIZE,
+                BLUE,
+            )
+        }
 
         next_frame().await
     }

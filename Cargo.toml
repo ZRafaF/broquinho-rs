@@ -9,5 +9,5 @@ edition = "2021"
 macroquad = "0.3"
 
 [lib]
-name = "broquinho"
-path = "src/lib.rs"
+name = "helper"
+path = "src/helper.rs"
