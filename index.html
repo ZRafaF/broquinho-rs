@@ -24,9 +24,8 @@
         canvas {
             margin: 0px;
             padding: 0px;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
+            width: 800px;
+            height: 600px;
             position: absolute;
             background: black;
             z-index: 0;
@@ -38,7 +37,19 @@
     <canvas id="glcanvas" tabindex='1'></canvas>
     <!-- Minified and statically hosted version of https://github.com/not-fl3/macroquad/blob/master/js/mq_js_bundle.js -->
     <script src="https://not-fl3.github.io/miniquad-samples/mq_js_bundle.js"></script>
-    <script>load("target/wasm32-unknown-unknown/debug/broquinho-rs.wasm");</script> <!-- Your compiled wasm file -->
+    <script>
+    try {
+        load("./broquinho-rs.wasm");
+        
+    } catch (error) {
+        try {
+            load("./target/wasm32-unknown-unknown/release/broquinho-rs.wasm");
+            
+        } catch (error){
+            load("./target/wasm32-unknown-unknown/debug/broquinho-rs.wasm");
+        }
+    } 
+</script> <!-- Your compiled wasm file -->
 </body>
 
 </html>

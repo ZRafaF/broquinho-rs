@@ -2,6 +2,12 @@
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
+#[derive(Debug, Clone)]
+pub struct CanvasSize {
+    pub HEIGHT: f32,
+    pub WIDTH: f32,
+}
+
 pub struct Position {
     x: u16,
     y: u16,
@@ -11,6 +17,7 @@ pub struct Broquinho {
     // Struct for the destroyable blocks
     pos: Position,
     life: u8,
+    CANVAS_SIZE: CanvasSize,
 }
 
 pub enum MovementDirection {
@@ -22,14 +29,16 @@ pub struct Paddle {
     pub x: u16,
     pub length: u16,
     speed: u16,
+    CANVAS_SIZE: CanvasSize,
 }
 
 impl Paddle {
-    pub fn new() -> Self {
+    pub fn new(canvas_size: CanvasSize) -> Self {
         Paddle {
             x: (0),
             length: (50),
             speed: (10),
+            CANVAS_SIZE: canvas_size,
         }
     }
 
@@ -43,8 +52,11 @@ impl Paddle {
                 }
             }
             MovementDirection::Right => {
-                if self.x < 1000 {
+                if self.x < self.CANVAS_SIZE.WIDTH as u16 - self.length {
                     self.x += self.speed;
+                }
+                if self.x > self.CANVAS_SIZE.WIDTH as u16 - self.length {
+                    self.x = self.CANVAS_SIZE.WIDTH as u16 - self.length;
                 }
             }
         }
@@ -54,13 +66,15 @@ impl Paddle {
 pub struct Game {
     pub broquinho_vec: Vec<Broquinho>,
     pub paddle: Paddle,
+    CANVAS_SIZE: CanvasSize,
 }
 
 impl Game {
-    pub fn new() -> Self {
+    pub fn new(canvas_size: CanvasSize) -> Self {
         Game {
-            paddle: Paddle::new(),
+            paddle: Paddle::new(canvas_size.clone()),
             broquinho_vec: vec![],
+            CANVAS_SIZE: canvas_size.clone(),
         }
     }
 

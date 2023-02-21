@@ -2,14 +2,30 @@
 // https://opensource.org/licenses/MIT
 // Im using the macroquad crate https://github.com/not-fl3/macroquad/
 
-use broquinho::{self, Paddle};
+use broquinho;
+use broquinho::CanvasSize;
 use macroquad::prelude::*;
 
 const PADDLE_HEIGHT: f32 = 10.0;
 
-#[macroquad::main("Broquinho")] // Name of the app
+const CANVAS_SIZE: CanvasSize = CanvasSize {
+    HEIGHT: 600.0,
+    WIDTH: 800.0,
+};
+
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "Broquinho".to_owned(),
+        window_height: CANVAS_SIZE.HEIGHT as i32,
+        window_width: CANVAS_SIZE.WIDTH as i32,
+        window_resizable: false,
+        ..Default::default()
+    }
+}
+
+#[macroquad::main(window_conf)] // Name of the app
 async fn main() {
-    let mut game: broquinho::Game = broquinho::Game::new();
+    let mut game: broquinho::Game = broquinho::Game::new(CANVAS_SIZE.clone());
     println!("Paddle x: {}", game.paddle.x);
     loop {
         clear_background(GRAY);

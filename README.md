@@ -16,11 +16,21 @@
 
 # Broquinho
 
+Breakout like game made with Rust and Macroquad. Developed as a way to start learning Rust.
+
 Made using the crate [macroquad](https://github.com/not-fl3/macroquad/)
 
 ## How to run
 
-1. Run cargo withi `cargo run` this will build an app and the wasm files.
+### Development
+
+1. Run with `cargo run` this will build an app and the wasm files.
+
+### WASM
+
+1. Run `cargo build --target wasm32-unknown-unknown` to build the `.wasm`.
+
+   > If you want you can run `cargo build --target wasm32-unknown-unknown --release` to create a release build.
 
 2. If you want to run it on the web run `basic-http-server .` the `.` is basically the path to the dir with the `index.html` file on.
    > The `index.html` links to the wasm file, check [macroquad wasm](https://github.com/not-fl3/macroquad/#wasm) instructions for more details.
