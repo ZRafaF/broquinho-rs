@@ -42,12 +42,7 @@
         load("./broquinho-rs.wasm");
         
     } catch (error) {
-        try {
-            load("./target/wasm32-unknown-unknown/release/broquinho-rs.wasm");
-            
-        } catch (error){
-            load("./target/wasm32-unknown-unknown/debug/broquinho-rs.wasm");
-        }
+        
     } 
 </script> <!-- Your compiled wasm file -->
 </body>

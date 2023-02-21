@@ -1,0 +1,30 @@
+# Copyright (c) 2023 rafae
+#
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
+
+name: ci
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      - uses: actions/cache@v2
+        with:
+          key: ${{ github.ref }}
+          path: .cache
+      - name: Build
+        run: |
+          npm install
+          npm run build
+      - name: Deploy
+        run: npm run deploy

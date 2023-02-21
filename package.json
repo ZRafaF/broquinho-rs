@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build": "cargo build --target wasm32-unknown-unknown --release && cp -r ./target/wasm32-unknown-unknown/release/broquinho-rs.wasm ./build",
+    "deploy": "gh-pages -d build"
+  },
+  "devDependencies": {
+    "gh-pages": "^5.0.0"
+  }
+}
