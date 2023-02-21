@@ -24,9 +24,9 @@ jobs:
           path: .cache
       - name: Build
         run: |
-          npm install
-          npm run installRustDep
-          npm run build
+          rustup target add wasm32-unknown-unknown
+          cargo build --target wasm32-unknown-unknown --release
+          cp -r ./target/wasm32-unknown-unknown/release/broquinho-rs.wasm ./build
       - name: Deploy
         uses: crazy-max/ghaction-github-pages@v3
         with:
