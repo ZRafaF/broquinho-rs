@@ -32,5 +32,5 @@ Made using the crate [macroquad](https://github.com/not-fl3/macroquad/)
 
    > If you want you can run `cargo build --target wasm32-unknown-unknown --release` to create a release build.
 
-2. If you want to run it on the web run `basic-http-server .` the `.` is basically the path to the dir with the `index.html` file on.
+2. If you want to run it on the web run `basic-http-server ./build/` the second argument is the path to the dir with the `index.html` file on.
    > The `index.html` links to the wasm file, check [macroquad wasm](https://github.com/not-fl3/macroquad/#wasm) instructions for more details.

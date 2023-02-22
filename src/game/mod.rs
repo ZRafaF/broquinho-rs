@@ -6,6 +6,7 @@ pub mod broquinho;
 use broquinho::Broquinho;
 
 mod paddle;
+use macroquad::prelude::Color;
 use paddle::Paddle;
 
 mod ball;
@@ -14,8 +15,12 @@ use ball::Ball;
 // Import everything from the helper module
 use helper::*;
 
+const SAFE_PADDLE_ZONE: f32 = 150.0; // Size of the zone without blocks
+const BALL_RADIUS: f32 = 4.0; // Size of the zone without blocks
+
 pub struct Game {
     pub broquinho_vec: Vec<Broquinho>,
+    pub ball: Ball,
     pub paddle: Paddle,
     CANVAS_SIZE: CanvasSize,
     broquinhos_per_row: u16, // Defines the size of the broquinhos
@@ -34,6 +39,17 @@ impl Game {
             num_of_cols: calculate_num_of_cols(canvas_size.clone(), calculated_broquinho_size),
             broquinho_vec: vec![],
             CANVAS_SIZE: canvas_size.clone(),
+            ball: Ball::new(
+                Position {
+                    x: (canvas_size.WIDTH / 2.0),
+                    y: (canvas_size.HEIGHT - (SAFE_PADDLE_ZONE as f32 / 2.0)),
+                },
+                Position {
+                    x: (0.0),
+                    y: (10.0),
+                },
+                BALL_RADIUS,
+            ),
         }
     }
 
@@ -72,5 +88,5 @@ fn calculate_broquinhos_size(canvas_size: CanvasSize, broquinhos_per_row: u16) -
 }
 
 fn calculate_num_of_cols(canvas_size: CanvasSize, broquinho_size: f32) -> u16 {
-    canvas_size.HEIGHT as u16 / broquinho_size as u16
+    (canvas_size.HEIGHT - SAFE_PADDLE_ZONE) as u16 / broquinho_size as u16
 }

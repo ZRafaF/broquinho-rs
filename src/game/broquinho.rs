@@ -4,27 +4,43 @@
 // https://opensource.org/licenses/MIT
 use helper::*;
 
-#[derive(Hash, Clone)]
+#[derive(Clone)]
+
+// Struct for the destroyable blocks
+
+/*
+    -----------------
+    |               |
+    |               |
+    |       *(0,0)  |
+    |               |
+    |               |
+    -----------------
+*/
+
 pub struct Broquinho {
-    // Struct for the destroyable blocks
-    pos: Position,
+    pos: Position<u16>,
+    screen_pos: Position<f32>,
     life: u8,
 }
 
 impl Broquinho {
-    pub fn new(position: Position, starting_life: u8) -> Self {
+    pub fn new(position: Position<u16>, screen_position: Position<f32>, starting_life: u8) -> Self {
         Broquinho {
-            pos: (position.clone()),
+            pos: (position),
+            screen_pos: (screen_position.clone()),
             life: (starting_life),
         }
     }
 
-    pub fn get_pos_x(&self) -> f32 {
-        self.pos.x as f32
+    pub fn get_pos(&self) -> &Position<u16> {
+        &self.pos
     }
-    pub fn get_pos_y(&self) -> f32 {
-        self.pos.y as f32
+
+    pub fn get_screen_pos(&self) -> &Position<f32> {
+        &self.screen_pos
     }
+
     pub fn get_life(&self) -> u8 {
         self.life
     }
