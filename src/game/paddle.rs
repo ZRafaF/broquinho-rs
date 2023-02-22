@@ -5,39 +5,37 @@
 use helper::*;
 
 pub struct Paddle {
-    pub x: u16,
-    pub length: u16,
-    speed: u16,
-    CANVAS_SIZE: CanvasSize,
+    pub x: f32,
+    pub length: f32,
+    speed: f32,
+    canvas_size: CanvasSize,
 }
 
 impl Paddle {
     pub fn new(canvas_size: CanvasSize) -> Self {
         Paddle {
-            x: (0),
-            length: (50),
-            speed: (10),
-            CANVAS_SIZE: canvas_size,
+            x: (0.0),
+            length: (50.0),
+            speed: (500.0),
+            canvas_size: canvas_size,
         }
     }
 
-    pub fn move_paddle(&mut self, direction: MovementDirection) {
-        match direction {
-            MovementDirection::Left => {
-                if self.x > self.speed {
-                    self.x -= self.speed;
-                } else {
-                    self.x = 0;
-                }
-            }
-            MovementDirection::Right => {
-                if self.x < self.CANVAS_SIZE.WIDTH as u16 - self.length {
-                    self.x += self.speed;
-                }
-                if self.x > self.CANVAS_SIZE.WIDTH as u16 - self.length {
-                    self.x = self.CANVAS_SIZE.WIDTH as u16 - self.length;
-                }
-            }
+    pub fn move_paddle(&mut self, direction: MovementDirection, delta_time: &f32) {
+        let delta_position = match direction {
+            MovementDirection::Left => -self.speed * delta_time,
+            MovementDirection::Right => self.speed * delta_time,
+        };
+        let new_position = self.x + delta_position;
+        if new_position < 0.0 {
+            self.x = 0.0;
+            return;
         }
+        if new_position > self.canvas_size.WIDTH - self.length {
+            self.x = self.canvas_size.WIDTH - self.length;
+            return;
+        }
+
+        self.x = new_position;
     }
 }

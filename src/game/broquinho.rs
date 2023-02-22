@@ -4,6 +4,7 @@
 // https://opensource.org/licenses/MIT
 use helper::*;
 
+#[derive(Hash, Clone)]
 pub struct Broquinho {
     // Struct for the destroyable blocks
     pos: Position,
@@ -13,10 +14,11 @@ pub struct Broquinho {
 impl Broquinho {
     pub fn new(position: Position, starting_life: u8) -> Self {
         Broquinho {
-            pos: (position),
+            pos: (position.clone()),
             life: (starting_life),
         }
     }
+
     pub fn get_pos_x(&self) -> f32 {
         self.pos.x as f32
     }
