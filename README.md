@@ -20,6 +20,8 @@ Breakout like game made with Rust and Macroquad. Developed as a way to start lea
 
 Made using the crate [macroquad](https://github.com/not-fl3/macroquad/)
 
+## [Github page](https://zrafaf.github.io/broquinho-rs/)
+
 ## How to run
 
 ### Development

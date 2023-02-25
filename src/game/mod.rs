@@ -83,6 +83,7 @@ impl Game {
     }
 
     pub fn process(&mut self, delta_time: &f32) {
+        self.paddle.process(delta_time);
         self.ball.process(delta_time);
     }
 

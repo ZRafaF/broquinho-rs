@@ -74,8 +74,17 @@ async fn main() {
             game.move_right(&delta_time);
         }
 
-        for touch in touches() {
-            println!("x {}  y {}", touch.position.x, touch.position.y)
+        if is_mouse_button_down(MouseButton::Left) {
+            let (mouse_x, mouse_y) = mouse_position();
+            if mouse_x < CANVAS_SIZE.WIDTH / 2.0 {
+                game.move_left(&delta_time);
+            } else {
+                game.move_right(&delta_time);
+            }
+            game.ball.set_screen_pos(Position {
+                x: (mouse_x),
+                y: (mouse_y),
+            });
         }
 
         game.process(&delta_time);
@@ -117,18 +126,6 @@ async fn main() {
             )
         }
 
-        draw_circle(
-            game.ball.get_screen_pos().x,
-            game.ball.get_screen_pos().y,
-            game.ball.get_radius(),
-            YELLOW,
-        );
-        let (mouse_x, mouse_y) = mouse_position();
-        game.ball.set_screen_pos(Position {
-            x: (mouse_x),
-            y: (mouse_y),
-        });
-
         let neighbor_broquinhos: Vec<&Broquinho> = game.get_neighbor_cells(game.ball.get_pos());
         for broquinho in neighbor_broquinhos.iter() {
             draw_rectangle(
@@ -136,10 +133,16 @@ async fn main() {
                 broquinho.get_screen_pos().y - (broquinho_size / 2.0),
                 broquinho_size,
                 broquinho_size,
-                YELLOW,
+                RED,
             );
         }
 
+        draw_circle(
+            game.ball.get_screen_pos().x,
+            game.ball.get_screen_pos().y,
+            game.ball.get_radius(),
+            YELLOW,
+        );
         next_frame().await
     }
 }
