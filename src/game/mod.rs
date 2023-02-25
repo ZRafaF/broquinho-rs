@@ -6,7 +6,6 @@ pub mod broquinho;
 use broquinho::Broquinho;
 
 mod paddle;
-use macroquad::prelude::Color;
 use paddle::Paddle;
 
 mod ball;
@@ -46,9 +45,10 @@ impl Game {
                 },
                 Position {
                     x: (0.0),
-                    y: (10.0),
+                    y: (-10.0),
                 },
                 BALL_RADIUS,
+                calculated_broquinho_size,
             ),
         }
     }
@@ -80,6 +80,41 @@ impl Game {
 
     fn kill_broquinho(&self, broquinho_ref: &mut Broquinho) {
         todo!()
+    }
+
+    pub fn process(&mut self, delta_time: &f32) {
+        self.ball.process(delta_time);
+    }
+
+    pub fn get_neighbor_cells(&self, pos: &Position<u16>) -> Vec<&Broquinho> {
+        let mut neighbor_broquinhos: Vec<&Broquinho> = vec![];
+        for y in 0..=2 {
+            if pos.y == 0 && y == 0 {
+                continue;
+            }
+            if pos.y == self.num_of_cols - 1 && y == 2 {
+                continue;
+            }
+
+            for x in 0..=2 {
+                if pos.x == 0 && x == 0 {
+                    continue;
+                }
+                if pos.x == self.broquinhos_per_row - 1 && x == 2 {
+                    continue;
+                }
+                let neighbor_pos = Position {
+                    x: { pos.x + x - 1 },
+                    y: { pos.y + y - 1 },
+                };
+                let neighbor_pos_1d = helper::pos_to_1d(&neighbor_pos, self.broquinhos_per_row);
+                if neighbor_pos_1d as usize >= self.broquinho_vec.len() {
+                    continue;
+                }
+                neighbor_broquinhos.push(&self.broquinho_vec[neighbor_pos_1d as usize])
+            }
+        }
+        return neighbor_broquinhos;
     }
 }
 

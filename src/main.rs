@@ -48,7 +48,7 @@ async fn main() {
     for i in 0..BROQUINHOS_PER_ROW {
         for j in 0..game.get_num_of_cols() {
             broquinhos_vector
-                [pos_to_1d(Position { x: (i), y: (j) }, BROQUINHOS_PER_ROW) as usize] =
+                [pos_to_1d(&Position { x: (i), y: (j) }, BROQUINHOS_PER_ROW) as usize] =
                 Broquinho::new(
                     Position { x: (i), y: (j) },
                     Position {
@@ -77,6 +77,8 @@ async fn main() {
         for touch in touches() {
             println!("x {}  y {}", touch.position.x, touch.position.y)
         }
+
+        game.process(&delta_time);
 
         draw_rectangle(
             game.paddle.x as f32,
@@ -121,6 +123,22 @@ async fn main() {
             game.ball.get_radius(),
             YELLOW,
         );
+        let (mouse_x, mouse_y) = mouse_position();
+        game.ball.set_screen_pos(Position {
+            x: (mouse_x),
+            y: (mouse_y),
+        });
+
+        let neighbor_broquinhos: Vec<&Broquinho> = game.get_neighbor_cells(game.ball.get_pos());
+        for broquinho in neighbor_broquinhos.iter() {
+            draw_rectangle(
+                broquinho.get_screen_pos().x - (broquinho_size / 2.0),
+                broquinho.get_screen_pos().y - (broquinho_size / 2.0),
+                broquinho_size,
+                broquinho_size,
+                YELLOW,
+            );
+        }
 
         next_frame().await
     }
