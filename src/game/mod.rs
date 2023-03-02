@@ -46,7 +46,7 @@ impl Game {
                 },
                 Position {
                     x: (0.0),
-                    y: (-10.0),
+                    y: (100.0),
                 },
                 BALL_RADIUS,
                 calculated_broquinho_size,
@@ -147,4 +147,12 @@ fn check_collision(
         ball.ricocchet(CollisionDirection::Top);
         return;
     }
+
+    if (ball.get_screen_pos().y + ball.get_radius())
+        > (paddle.get_screen_pos().y - paddle.get_paddle_height())
+    {
+        ball.ricocchet(CollisionDirection::Down);
+        return;
+    }
+    for idx in neighbor_broquinhos_indexes.iter() {}
 }

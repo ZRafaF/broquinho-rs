@@ -19,7 +19,10 @@ pub struct Paddle {
 impl Paddle {
     pub fn new(canvas_size: CanvasSize) -> Self {
         Paddle {
-            screen_pos: (Position { x: (0.0), y: (5.0) }),
+            screen_pos: (Position {
+                x: (canvas_size.WIDTH / 2.0),
+                y: (canvas_size.HEIGHT - 5.0),
+            }),
             length: (50.0),
             speed: (0.0),
             canvas_size: canvas_size,

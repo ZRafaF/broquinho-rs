@@ -92,7 +92,7 @@ async fn main() {
 
         draw_rectangle(
             paddle_pos.x,
-            screen_height() - game.paddle.get_paddle_height() - paddle_pos.y,
+            paddle_pos.y - game.paddle.get_paddle_height(),
             game.paddle.length as f32,
             game.paddle.get_paddle_height(),
             RED,
