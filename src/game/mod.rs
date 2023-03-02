@@ -3,6 +3,8 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 pub mod broquinho;
+use std::ptr::null;
+
 use broquinho::Broquinho;
 
 mod paddle;
@@ -54,10 +56,6 @@ impl Game {
         }
     }
 
-    pub fn hit(&self, broquinho_ref: &mut Broquinho, damage: u8) {
-        broquinho_ref.damage(damage)
-    }
-
     pub fn move_right(&mut self, delta_time: &f32) {
         self.paddle
             .move_paddle(MovementDirection::Right, delta_time);
@@ -92,12 +90,21 @@ impl Game {
         self.ball.process(delta_time);
 
         let neighbor_broquinhos_indexes = get_neighbor_cells(&self);
-        check_collision(
+        let colliding_broquinhos_indexes: Vec<HitResult> = check_collision(
             &mut self.ball,
             &mut self.broquinho_vec,
             neighbor_broquinhos_indexes,
             &self.paddle,
+            self.broquinho_size,
         );
+
+        solve_collisions(
+            colliding_broquinhos_indexes,
+            &mut self.ball,
+            &mut self.broquinho_vec,
+            &self.paddle,
+            10,
+        )
     }
 }
 
@@ -135,6 +142,9 @@ pub fn get_neighbor_cells(game: &Game) -> Vec<u32> {
             if neighbor_pos_1d as usize >= game.broquinho_vec.len() {
                 continue;
             }
+            if (game.broquinho_vec[neighbor_pos_1d as usize].get_life() == 0) {
+                continue;
+            }
             neighbor_broquinhos_indexes.push(neighbor_pos_1d)
         }
     }
@@ -146,17 +156,53 @@ fn check_collision(
     broquinho_vec: &mut Vec<Broquinho>,
     neighbor_broquinhos_indexes: Vec<u32>,
     paddle: &Paddle,
-) {
-    if neighbor_broquinhos_indexes.len() > 2 {
-        //ball.ricocchet(CollisionDirection::Top);
-        return;
+    broquinho_size: f32,
+) -> Vec<HitResult> {
+    let ball_screen_pos = ball.get_screen_pos();
+    let ball_radius = ball.get_radius();
+    let mut colliding_broquinhos_indexes: Vec<HitResult> = vec![];
+
+    if (ball_screen_pos.y + ball_radius) > (paddle.get_screen_pos().y - paddle.get_paddle_height())
+    {
+        ball.ricochet(CollisionDirection::Down);
+        return colliding_broquinhos_indexes;
     }
 
-    if (ball.get_screen_pos().y + ball.get_radius())
-        > (paddle.get_screen_pos().y - paddle.get_paddle_height())
-    {
-        ball.ricocchet(CollisionDirection::Down);
-        return;
+    for idx in neighbor_broquinhos_indexes {
+        let usize_idx = idx as usize;
+        let broquinho = &broquinho_vec[usize_idx];
+        /*
+        println!(
+            "Broquinho x{} y{} | Ball x{} y{}",
+            broquinho.get_screen_pos().x,
+            broquinho.get_screen_pos().y,
+            ball_screen_pos.x,
+            ball_screen_pos.y
+        );
+        */
+        if ball_screen_pos.y - ball_radius < broquinho.get_screen_pos().y + broquinho_size {
+            //ball.ricochet(CollisionDirection::Top);
+            colliding_broquinhos_indexes.push(HitResult(usize_idx, CollisionDirection::Top));
+            continue;
+        }
     }
-    for idx in neighbor_broquinhos_indexes.iter() {}
+    colliding_broquinhos_indexes
+}
+
+fn solve_collisions(
+    colliding_broquinhos_indexes: Vec<HitResult>,
+    ball: &mut Ball,
+    broquinho_vec: &mut Vec<Broquinho>,
+    paddle: &Paddle,
+    damage: i16,
+) {
+    for collision in colliding_broquinhos_indexes {
+        ball.ricochet(collision.1);
+        let broquinho_life = broquinho_vec[collision.0].get_life();
+        if (damage < broquinho_life) {
+            broquinho_vec[collision.0].set_life(broquinho_life - damage);
+        } else {
+            broquinho_vec[collision.0].set_life(0);
+        }
+    }
 }

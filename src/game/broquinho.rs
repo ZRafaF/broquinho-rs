@@ -20,11 +20,15 @@ use helper::*;
 pub struct Broquinho {
     pos: Position<u16>,
     screen_pos: Position<f32>,
-    life: u8,
+    life: i16,
 }
 
 impl Broquinho {
-    pub fn new(position: Position<u16>, screen_position: Position<f32>, starting_life: u8) -> Self {
+    pub fn new(
+        position: Position<u16>,
+        screen_position: Position<f32>,
+        starting_life: i16,
+    ) -> Self {
         Broquinho {
             pos: (position),
             screen_pos: (screen_position.clone()),
@@ -40,17 +44,19 @@ impl Broquinho {
         &self.screen_pos
     }
 
-    pub fn get_life(&self) -> u8 {
+    pub fn get_life(&self) -> i16 {
         self.life
     }
-    pub fn set_life(&mut self, life: u8) {
+    pub fn set_life(&mut self, life: i16) {
         self.life = life;
     }
 
-    pub fn damage(&mut self, damage: u8) {
-        if damage > self.get_life() {
+    /*
+    pub fn damage(&mut self) {
+        if damage < self.get_life() {
             self.set_life(self.get_life() - damage);
         } else {
         }
     }
+    */
 }

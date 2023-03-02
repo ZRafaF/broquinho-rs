@@ -55,7 +55,7 @@ impl Ball {
         self.pos = helper::screen_pos_to_pos(self.screen_pos, self.broquinho_size);
     }
 
-    pub fn ricocchet(&mut self, collision_direction: CollisionDirection) {
+    pub fn ricochet(&mut self, collision_direction: CollisionDirection) {
         match collision_direction {
             CollisionDirection::Left => {
                 self.velocity.x *= -1.0;

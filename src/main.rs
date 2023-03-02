@@ -54,7 +54,7 @@ async fn main() {
                         x: (i as f32 * broquinho_size),
                         y: (j as f32 * broquinho_size),
                     },
-                    5,
+                    10,
                 );
         }
     }
@@ -99,6 +99,9 @@ async fn main() {
         );
 
         for broquinho in game.broquinho_vec.iter() {
+            if broquinho.get_life() == 0 {
+                continue;
+            }
             // Draw the broquinho it self
             draw_rectangle(
                 broquinho.get_screen_pos().x,
@@ -128,8 +131,8 @@ async fn main() {
         }
 
         let neighbor_broquinhos_indexes: Vec<u32> = game::get_neighbor_cells(&game);
-        for idx in neighbor_broquinhos_indexes.iter() {
-            let broquinho = game.get_broquinho_at(*idx as usize);
+        for idx in neighbor_broquinhos_indexes {
+            let broquinho = game.get_broquinho_at(idx as usize);
             draw_rectangle(
                 broquinho.get_screen_pos().x,
                 broquinho.get_screen_pos().y,
