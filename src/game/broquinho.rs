@@ -18,26 +18,16 @@ use helper::*;
 */
 #[derive(Debug, Clone)]
 pub struct Broquinho {
-    pos: Position<u16>,
     screen_pos: Position<f32>,
     life: i16,
 }
 
 impl Broquinho {
-    pub fn new(
-        position: Position<u16>,
-        screen_position: Position<f32>,
-        starting_life: i16,
-    ) -> Self {
+    pub fn new(screen_position: Position<f32>, starting_life: i16) -> Self {
         Broquinho {
-            pos: (position),
             screen_pos: (screen_position.clone()),
             life: (starting_life),
         }
-    }
-
-    pub fn get_pos(&self) -> &Position<u16> {
-        &self.pos
     }
 
     pub fn get_screen_pos(&self) -> &Position<f32> {

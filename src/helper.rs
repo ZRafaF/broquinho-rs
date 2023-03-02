@@ -22,8 +22,8 @@ impl<T: Add<Output = T>> Add for Position<T> {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct CanvasSize {
-    pub HEIGHT: f32,
-    pub WIDTH: f32,
+    pub height: f32,
+    pub width: f32,
 }
 
 #[derive(Debug)]

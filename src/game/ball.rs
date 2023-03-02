@@ -41,6 +41,7 @@ impl Ball {
     pub fn get_pos(&self) -> &Position<u16> {
         &self.pos
     }
+    #[allow(dead_code)]
     pub fn get_velocity(&self) -> &Position<f32> {
         &self.velocity
     }
@@ -58,7 +59,7 @@ impl Ball {
         self.pos = helper::screen_pos_to_pos(self.screen_pos, self.broquinho_size);
     }
 
-    pub fn ricochet(&mut self, collision_direction: CollisionDirection) {
+    pub fn ricochet(&mut self, collision_direction: &CollisionDirection) {
         let random_noise: f32 = RandomRange::gen_range(-5.0, 5.0);
         match collision_direction {
             CollisionDirection::Left => {

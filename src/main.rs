@@ -16,15 +16,15 @@ const BROQUINHOS_PER_ROW: u16 = 51;
 const BROQUINHO_OUTLINE_THICKNESS: f32 = 1.0;
 
 const CANVAS_SIZE: CanvasSize = CanvasSize {
-    HEIGHT: 600.0,
-    WIDTH: 800.0,
+    height: 600.0,
+    width: 800.0,
 };
 
 fn window_conf() -> Conf {
     Conf {
         window_title: "Broquinho".to_owned(),
-        window_height: CANVAS_SIZE.HEIGHT as i32,
-        window_width: CANVAS_SIZE.WIDTH as i32,
+        window_height: CANVAS_SIZE.height as i32,
+        window_width: CANVAS_SIZE.width as i32,
         window_resizable: false,
         ..Default::default()
     }
@@ -34,22 +34,17 @@ fn window_conf() -> Conf {
 async fn main() {
     let mut game: game::Game = game::Game::new(CANVAS_SIZE.clone(), BROQUINHOS_PER_ROW);
     let broquinho_size = game.get_broquinho_size();
-    let mut broquinhos_vector: Vec<Broquinho> = vec![
-        Broquinho::new(
-            Position { x: (0), y: (0) },
-            Position { x: (0.0), y: (0.0) },
-            1
-        );
-        BROQUINHOS_PER_ROW as usize
-            * game.get_num_of_cols() as usize
-    ];
+    let mut broquinhos_vector: Vec<Broquinho> =
+        vec![
+            Broquinho::new(Position { x: (0.0), y: (0.0) }, 1);
+            BROQUINHOS_PER_ROW as usize * game.get_num_of_cols() as usize
+        ];
 
     for i in 0..BROQUINHOS_PER_ROW {
         for j in 0..game.get_num_of_cols() {
             broquinhos_vector
                 [pos_to_1d(&Position { x: (i), y: (j) }, BROQUINHOS_PER_ROW) as usize] =
                 Broquinho::new(
-                    Position { x: (i), y: (j) },
                     Position {
                         x: (i as f32 * broquinho_size),
                         y: (j as f32 * broquinho_size),
@@ -75,7 +70,7 @@ async fn main() {
 
         if is_mouse_button_down(MouseButton::Left) {
             let (mouse_x, mouse_y) = mouse_position();
-            if mouse_x < CANVAS_SIZE.WIDTH / 2.0 {
+            if mouse_x < CANVAS_SIZE.width / 2.0 {
                 game.move_left(&delta_time);
             } else {
                 game.move_right(&delta_time);
@@ -121,6 +116,7 @@ async fn main() {
                 BLACK,
             );
 
+            /*
             // Draw center of the cube
             draw_circle(
                 broquinho.get_screen_pos().x + (broquinho_size / 2.0),
@@ -128,8 +124,10 @@ async fn main() {
                 1.0,
                 RED,
             )
+            */
         }
 
+        /*
         let neighbor_broquinhos_indexes: Vec<u32> = game::get_neighbor_cells(&game);
         for idx in neighbor_broquinhos_indexes {
             let broquinho = game.get_broquinho_at(idx as usize);
@@ -141,6 +139,7 @@ async fn main() {
                 RED,
             );
         }
+        */
 
         draw_circle(
             game.ball.get_screen_pos().x,

@@ -3,7 +3,6 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 pub mod broquinho;
-use std::ptr::null;
 
 use broquinho::Broquinho;
 
@@ -24,7 +23,6 @@ pub struct Game {
     pub broquinho_vec: Vec<Broquinho>,
     pub ball: Ball,
     pub paddle: Paddle,
-    CANVAS_SIZE: CanvasSize,
     broquinhos_per_row: u16, // Defines the size of the broquinhos
     broquinho_size: f32,
     num_of_cols: u16,
@@ -40,11 +38,10 @@ impl Game {
             broquinho_size: (calculated_broquinho_size),
             num_of_cols: calculate_num_of_cols(canvas_size.clone(), calculated_broquinho_size),
             broquinho_vec: vec![],
-            CANVAS_SIZE: canvas_size.clone(),
             ball: Ball::new(
                 Position {
-                    x: (canvas_size.WIDTH / 2.0),
-                    y: (canvas_size.HEIGHT - (SAFE_PADDLE_ZONE as f32 / 2.0)),
+                    x: (canvas_size.width / 2.0),
+                    y: (canvas_size.height - (SAFE_PADDLE_ZONE as f32 / 2.0)),
                 },
                 Position {
                     x: (0.0),
@@ -61,6 +58,7 @@ impl Game {
             .move_paddle(MovementDirection::Right, delta_time);
     }
 
+    #[allow(dead_code)]
     pub fn get_broquinho_at(&self, idx: usize) -> &Broquinho {
         &self.broquinho_vec[idx]
     }
@@ -79,10 +77,6 @@ impl Game {
 
     pub fn set_broquinho_vec(&mut self, new_broquinho_vec: Vec<Broquinho>) {
         self.broquinho_vec = new_broquinho_vec;
-    }
-
-    fn kill_broquinho(&self, broquinho_ref: &mut Broquinho) {
-        todo!()
     }
 
     pub fn process(&mut self, delta_time: &f32) {
@@ -109,11 +103,11 @@ impl Game {
 }
 
 fn calculate_broquinhos_size(canvas_size: CanvasSize, broquinhos_per_row: u16) -> f32 {
-    canvas_size.WIDTH / broquinhos_per_row as f32
+    canvas_size.width / broquinhos_per_row as f32
 }
 
 fn calculate_num_of_cols(canvas_size: CanvasSize, broquinho_size: f32) -> u16 {
-    (canvas_size.HEIGHT - SAFE_PADDLE_ZONE) as u16 / broquinho_size as u16
+    (canvas_size.height - SAFE_PADDLE_ZONE) as u16 / broquinho_size as u16
 }
 
 pub fn get_neighbor_cells(game: &Game) -> Vec<u32> {
@@ -142,7 +136,7 @@ pub fn get_neighbor_cells(game: &Game) -> Vec<u32> {
             if neighbor_pos_1d as usize >= game.broquinho_vec.len() {
                 continue;
             }
-            if (game.broquinho_vec[neighbor_pos_1d as usize].get_life() == 0) {
+            if game.broquinho_vec[neighbor_pos_1d as usize].get_life() == 0 {
                 continue;
             }
             neighbor_broquinhos_indexes.push(neighbor_pos_1d)
@@ -167,33 +161,23 @@ fn check_collision(
         && ball_screen_pos.x + ball_radius > paddle.get_screen_pos().x
         && ball_screen_pos.x - ball_radius < paddle.get_screen_pos().x + paddle.length
     {
-        ball.ricochet(CollisionDirection::Down);
+        ball.ricochet(&CollisionDirection::Down);
         return colliding_broquinhos_indexes;
     }
 
     for idx in neighbor_broquinhos_indexes {
         let usize_idx = idx as usize;
         let broquinho = &broquinho_vec[usize_idx];
-        /*
-        println!(
-            "Broquinho x{} y{} | Ball x{} y{}",
-            broquinho.get_screen_pos().x,
-            broquinho.get_screen_pos().y,
-            ball_screen_pos.x,
-            ball_screen_pos.y
-        );
-        */
+
         if ball_screen_pos.y - ball_radius < broquinho.get_screen_pos().y + broquinho_size
             && ball_screen_pos.y + ball_radius > broquinho.get_screen_pos().y
             && ball_screen_pos.x + ball_radius > broquinho.get_screen_pos().x
             && ball_screen_pos.x - ball_radius < broquinho.get_screen_pos().x + broquinho_size
         {
-            //ball.ricochet(CollisionDirection::Top);
             colliding_broquinhos_indexes.push(HitResult(
                 usize_idx,
                 calculate_collision_direction(ball, broquinho, broquinho_size),
             ));
-            println!("hit: {:?}", colliding_broquinhos_indexes.last());
             continue;
         }
     }
@@ -212,40 +196,23 @@ fn calculate_collision_direction(
 
     let ball_center = ball.get_screen_pos();
 
-    let x_is_in: bool = if (ball_center.x - broquinho_center.x).abs()
-        <= ball.get_radius() + (broquinho_size / 2.0)
-    {
-        true
-    } else {
-        false
-    };
+    let delta_x = ball_center.x - broquinho_center.x;
+    let delta_y = ball_center.y - broquinho_center.y;
 
-    let y_is_in: bool = if (ball_center.y - broquinho_center.y).abs()
-        <= ball.get_radius() + (broquinho_size / 2.0)
-    {
-        true
-    } else {
-        false
-    };
-    println!(
-        "x in {}, y in {} abs {} size {}",
-        x_is_in,
-        y_is_in,
-        (broquinho_center.y - ball_center.y).abs(),
-        ball.get_radius() + (broquinho_size / 2.0)
-    );
+    let delta_x_abs = delta_x.abs();
+    let delta_y_abs = delta_y.abs();
 
-    if ball_center.x <= broquinho_center.x && y_is_in {
-        return CollisionDirection::Right;
-    }
-    if ball_center.x > broquinho_center.x && y_is_in {
+    if delta_x_abs > delta_y_abs && delta_x >= 0.0 {
         return CollisionDirection::Left;
     }
-    if ball_center.y <= broquinho_center.y && x_is_in {
-        return CollisionDirection::Down;
+    if delta_x_abs > delta_y_abs && delta_x < 0.0 {
+        return CollisionDirection::Right;
     }
-    if ball_center.y > broquinho_center.y && x_is_in {
+    if delta_y_abs > delta_x_abs && delta_y >= 0.0 {
         return CollisionDirection::Top;
+    }
+    if delta_y_abs > delta_x_abs && delta_y <= 0.0 {
+        return CollisionDirection::Down;
     }
 
     CollisionDirection::Down
@@ -257,12 +224,12 @@ fn solve_collisions(
     broquinho_vec: &mut Vec<Broquinho>,
     damage: i16,
 ) {
-    let mut do_once = true;
-    for collision in colliding_broquinhos_indexes {
-        if do_once {
-            ball.ricochet(collision.1);
-            do_once = false;
-        }
+    //! Here im using only the first hitResult even though im passing a vector
+    //! You can add a solver for multiple hits at once easily
+
+    if colliding_broquinhos_indexes.len() > 0 {
+        let collision = &colliding_broquinhos_indexes[0];
+        ball.ricochet(&collision.1);
         let broquinho_life = broquinho_vec[collision.0].get_life();
         if damage < broquinho_life {
             broquinho_vec[collision.0].set_life(broquinho_life - damage);

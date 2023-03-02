@@ -20,8 +20,8 @@ impl Paddle {
     pub fn new(canvas_size: CanvasSize) -> Self {
         Paddle {
             screen_pos: (Position {
-                x: (canvas_size.WIDTH / 2.0),
-                y: (canvas_size.HEIGHT - 5.0),
+                x: (canvas_size.width / 2.0),
+                y: (canvas_size.height - 5.0),
             }),
             length: (50.0),
             speed: (0.0),
@@ -59,8 +59,8 @@ impl Paddle {
             self.speed *= -0.8;
             return;
         }
-        if new_position > self.canvas_size.WIDTH - self.length {
-            self.screen_pos.x = self.canvas_size.WIDTH - self.length;
+        if new_position > self.canvas_size.width - self.length {
+            self.screen_pos.x = self.canvas_size.width - self.length;
             self.speed *= -0.8;
 
             return;
