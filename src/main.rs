@@ -9,7 +9,6 @@ use helper::*;
 
 use macroquad::prelude::*;
 
-const PADDLE_HEIGHT: f32 = 10.0;
 const BROQUINHOS_PER_ROW: u16 = 51;
 
 // GRAPHICS OPTIONS
@@ -89,11 +88,13 @@ async fn main() {
 
         game.process(&delta_time);
 
+        let paddle_pos = game.paddle.get_screen_pos();
+
         draw_rectangle(
-            game.paddle.x as f32,
-            screen_height() - PADDLE_HEIGHT - (5 as f32),
+            paddle_pos.x,
+            screen_height() - game.paddle.get_paddle_height() - paddle_pos.y,
             game.paddle.length as f32,
-            PADDLE_HEIGHT,
+            game.paddle.get_paddle_height(),
             RED,
         );
 
@@ -126,7 +127,8 @@ async fn main() {
             )
         }
 
-        let neighbor_broquinhos: Vec<&Broquinho> = game.get_neighbor_cells(game.ball.get_pos());
+        //let neighbor_broquinhos: Vec<&Broquinho> = game::get_neighbor_cells(&game);
+        /*
         for broquinho in neighbor_broquinhos.iter() {
             draw_rectangle(
                 broquinho.get_screen_pos().x - (broquinho_size / 2.0),
@@ -136,6 +138,7 @@ async fn main() {
                 RED,
             );
         }
+        */
 
         draw_circle(
             game.ball.get_screen_pos().x,

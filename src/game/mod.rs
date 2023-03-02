@@ -8,7 +8,7 @@ use broquinho::Broquinho;
 mod paddle;
 use paddle::Paddle;
 
-mod ball;
+pub mod ball;
 use ball::Ball;
 
 // Import everything from the helper module
@@ -17,6 +17,7 @@ use helper::*;
 const SAFE_PADDLE_ZONE: f32 = 150.0; // Size of the zone without blocks
 const BALL_RADIUS: f32 = 4.0; // Size of the zone without blocks
 
+#[derive(Debug, Clone)]
 pub struct Game {
     pub broquinho_vec: Vec<Broquinho>,
     pub ball: Ball,
@@ -85,37 +86,14 @@ impl Game {
     pub fn process(&mut self, delta_time: &f32) {
         self.paddle.process(delta_time);
         self.ball.process(delta_time);
-    }
 
-    pub fn get_neighbor_cells(&self, pos: &Position<u16>) -> Vec<&Broquinho> {
-        let mut neighbor_broquinhos: Vec<&Broquinho> = vec![];
-        for y in 0..=2 {
-            if pos.y == 0 && y == 0 {
-                continue;
-            }
-            if pos.y == self.num_of_cols - 1 && y == 2 {
-                continue;
-            }
-
-            for x in 0..=2 {
-                if pos.x == 0 && x == 0 {
-                    continue;
-                }
-                if pos.x == self.broquinhos_per_row - 1 && x == 2 {
-                    continue;
-                }
-                let neighbor_pos = Position {
-                    x: { pos.x + x - 1 },
-                    y: { pos.y + y - 1 },
-                };
-                let neighbor_pos_1d = helper::pos_to_1d(&neighbor_pos, self.broquinhos_per_row);
-                if neighbor_pos_1d as usize >= self.broquinho_vec.len() {
-                    continue;
-                }
-                neighbor_broquinhos.push(&self.broquinho_vec[neighbor_pos_1d as usize])
-            }
-        }
-        return neighbor_broquinhos;
+        let neighbor_broquinhos_indexes = get_neighbor_cells(self.clone());
+        check_collision(
+            &mut self.ball,
+            &mut self.broquinho_vec,
+            neighbor_broquinhos_indexes,
+            &self.paddle,
+        );
     }
 }
 
@@ -125,4 +103,48 @@ fn calculate_broquinhos_size(canvas_size: CanvasSize, broquinhos_per_row: u16) -
 
 fn calculate_num_of_cols(canvas_size: CanvasSize, broquinho_size: f32) -> u16 {
     (canvas_size.HEIGHT - SAFE_PADDLE_ZONE) as u16 / broquinho_size as u16
+}
+
+pub fn get_neighbor_cells(game: Game) -> Vec<u32> {
+    let mut neighbor_broquinhos_indexes: Vec<u32> = vec![];
+    let pos = game.ball.get_pos();
+    for y in 0..=2 {
+        if pos.y == 0 && y == 0 {
+            continue;
+        }
+        if pos.y == game.num_of_cols - 1 && y == 2 {
+            continue;
+        }
+
+        for x in 0..=2 {
+            if pos.x == 0 && x == 0 {
+                continue;
+            }
+            if pos.x == game.broquinhos_per_row - 1 && x == 2 {
+                continue;
+            }
+            let neighbor_pos = Position {
+                x: { pos.x + x - 1 },
+                y: { pos.y + y - 1 },
+            };
+            let neighbor_pos_1d = helper::pos_to_1d(&neighbor_pos, game.broquinhos_per_row);
+            if neighbor_pos_1d as usize >= game.broquinho_vec.len() {
+                continue;
+            }
+            neighbor_broquinhos_indexes.push(neighbor_pos_1d)
+        }
+    }
+    return neighbor_broquinhos_indexes;
+}
+
+fn check_collision(
+    ball: &mut Ball,
+    broquinho_vec: &mut Vec<Broquinho>,
+    neighbor_broquinhos_indexes: Vec<u32>,
+    paddle: &Paddle,
+) {
+    if neighbor_broquinhos_indexes.len() > 2 {
+        ball.ricocchet(CollisionDirection::Top);
+        return;
+    }
 }

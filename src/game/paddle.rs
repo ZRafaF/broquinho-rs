@@ -7,21 +7,32 @@ use helper::*;
 const MAX_PADDLE_SPEED: f32 = 500.0;
 const PADDLE_ACCELERATION: f32 = 900.0;
 
+#[derive(Debug, Clone)]
 pub struct Paddle {
-    pub x: f32,
+    screen_pos: Position<f32>,
     pub length: f32,
     speed: f32,
     canvas_size: CanvasSize,
+    paddle_height: f32,
 }
 
 impl Paddle {
     pub fn new(canvas_size: CanvasSize) -> Self {
         Paddle {
-            x: (0.0),
+            screen_pos: (Position { x: (0.0), y: (5.0) }),
             length: (50.0),
             speed: (0.0),
             canvas_size: canvas_size,
+            paddle_height: 10.0,
         }
+    }
+
+    pub fn get_screen_pos(&self) -> &Position<f32> {
+        &self.screen_pos
+    }
+
+    pub fn get_paddle_height(&self) -> f32 {
+        self.paddle_height
     }
 
     pub fn move_paddle(&mut self, direction: MovementDirection, delta_time: &f32) {
@@ -39,19 +50,19 @@ impl Paddle {
 
     pub fn process(&mut self, delta_time: &f32) {
         let delta_position = self.speed * delta_time;
-        let new_position = self.x + delta_position;
+        let new_position = self.screen_pos.x + delta_position;
         if new_position < 0.0 {
-            self.x = 0.0;
+            self.screen_pos.x = 0.0;
             self.speed *= -0.8;
             return;
         }
         if new_position > self.canvas_size.WIDTH - self.length {
-            self.x = self.canvas_size.WIDTH - self.length;
+            self.screen_pos.x = self.canvas_size.WIDTH - self.length;
             self.speed *= -0.8;
 
             return;
         }
 
-        self.x = new_position
+        self.screen_pos.x = new_position
     }
 }

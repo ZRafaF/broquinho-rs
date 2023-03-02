@@ -4,8 +4,6 @@
 // https://opensource.org/licenses/MIT
 use helper::*;
 
-#[derive(Clone)]
-
 // Struct for the destroyable blocks
 
 /*
@@ -17,7 +15,7 @@ use helper::*;
     |               |
     -----------------
 */
-
+#[derive(Debug, Clone)]
 pub struct Broquinho {
     pos: Position<u16>,
     screen_pos: Position<f32>,

@@ -11,3 +11,7 @@ macroquad = "0.3"
 [lib]
 name = "helper"
 path = "src/helper.rs"
+
+[profile.release]
+lto = true
+opt-level = 's'

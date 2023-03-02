@@ -2,9 +2,9 @@
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
-use helper::Position;
-use macroquad::prelude::scene::Handle;
+use helper::{CollisionDirection, Position};
 
+#[derive(Debug, Clone)]
 pub struct Ball {
     screen_pos: Position<f32>,
     velocity: Position<f32>,
@@ -53,5 +53,22 @@ impl Ball {
         let new_pos = delta_pos + self.screen_pos;
         self.screen_pos = new_pos;
         self.pos = helper::screen_pos_to_pos(self.screen_pos, self.broquinho_size);
+    }
+
+    pub fn ricocchet(&mut self, collision_direction: CollisionDirection) {
+        match collision_direction {
+            CollisionDirection::Left => {
+                self.velocity.x *= -1.0;
+            }
+            CollisionDirection::Right => {
+                self.velocity.x *= -1.0;
+            }
+            CollisionDirection::Down => {
+                self.velocity.y *= -1.0;
+            }
+            CollisionDirection::Top => {
+                self.velocity.y *= -1.0;
+            }
+        }
     }
 }

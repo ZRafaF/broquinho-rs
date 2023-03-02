@@ -1,9 +1,9 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-use std::ops::{Add, Mul};
+use std::ops::Add;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Position<T> {
     pub x: T,
     pub y: T,
@@ -20,7 +20,7 @@ impl<T: Add<Output = T>> Add for Position<T> {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct CanvasSize {
     pub HEIGHT: f32,
     pub WIDTH: f32,
@@ -29,6 +29,13 @@ pub struct CanvasSize {
 pub enum MovementDirection {
     Right,
     Left,
+}
+
+pub enum CollisionDirection {
+    Left,
+    Right,
+    Top,
+    Down,
 }
 
 pub fn pos_to_1d(position: &Position<u16>, broquinhos_per_row: u16) -> u32 {
