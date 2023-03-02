@@ -90,6 +90,7 @@ impl Game {
         self.ball.process(delta_time);
 
         let neighbor_broquinhos_indexes = get_neighbor_cells(&self);
+
         let colliding_broquinhos_indexes: Vec<HitResult> = check_collision(
             &mut self.ball,
             &mut self.broquinho_vec,
@@ -102,7 +103,6 @@ impl Game {
             colliding_broquinhos_indexes,
             &mut self.ball,
             &mut self.broquinho_vec,
-            &self.paddle,
             10,
         )
     }
@@ -162,7 +162,10 @@ fn check_collision(
     let ball_radius = ball.get_radius();
     let mut colliding_broquinhos_indexes: Vec<HitResult> = vec![];
 
-    if (ball_screen_pos.y + ball_radius) > (paddle.get_screen_pos().y - paddle.get_paddle_height())
+    if ball_screen_pos.y + ball_radius > paddle.get_screen_pos().y - paddle.get_paddle_height()
+        && ball_screen_pos.y - ball_radius < paddle.get_screen_pos().y
+        && ball_screen_pos.x + ball_radius > paddle.get_screen_pos().x
+        && ball_screen_pos.x - ball_radius < paddle.get_screen_pos().x + paddle.length
     {
         ball.ricochet(CollisionDirection::Down);
         return colliding_broquinhos_indexes;
@@ -180,26 +183,88 @@ fn check_collision(
             ball_screen_pos.y
         );
         */
-        if ball_screen_pos.y - ball_radius < broquinho.get_screen_pos().y + broquinho_size {
+        if ball_screen_pos.y - ball_radius < broquinho.get_screen_pos().y + broquinho_size
+            && ball_screen_pos.y + ball_radius > broquinho.get_screen_pos().y
+            && ball_screen_pos.x + ball_radius > broquinho.get_screen_pos().x
+            && ball_screen_pos.x - ball_radius < broquinho.get_screen_pos().x + broquinho_size
+        {
             //ball.ricochet(CollisionDirection::Top);
-            colliding_broquinhos_indexes.push(HitResult(usize_idx, CollisionDirection::Top));
+            colliding_broquinhos_indexes.push(HitResult(
+                usize_idx,
+                calculate_collision_direction(ball, broquinho, broquinho_size),
+            ));
+            println!("hit: {:?}", colliding_broquinhos_indexes.last());
             continue;
         }
     }
     colliding_broquinhos_indexes
 }
 
+fn calculate_collision_direction(
+    ball: &Ball,
+    broquinho: &Broquinho,
+    broquinho_size: f32,
+) -> CollisionDirection {
+    let broquinho_center: Position<f32> = Position {
+        x: { broquinho.get_screen_pos().x + (broquinho_size / 2.0) },
+        y: { broquinho.get_screen_pos().y + (broquinho_size / 2.0) },
+    };
+
+    let ball_center = ball.get_screen_pos();
+
+    let x_is_in: bool = if (ball_center.x - broquinho_center.x).abs()
+        <= ball.get_radius() + (broquinho_size / 2.0)
+    {
+        true
+    } else {
+        false
+    };
+
+    let y_is_in: bool = if (ball_center.y - broquinho_center.y).abs()
+        <= ball.get_radius() + (broquinho_size / 2.0)
+    {
+        true
+    } else {
+        false
+    };
+    println!(
+        "x in {}, y in {} abs {} size {}",
+        x_is_in,
+        y_is_in,
+        (broquinho_center.y - ball_center.y).abs(),
+        ball.get_radius() + (broquinho_size / 2.0)
+    );
+
+    if ball_center.x <= broquinho_center.x && y_is_in {
+        return CollisionDirection::Right;
+    }
+    if ball_center.x > broquinho_center.x && y_is_in {
+        return CollisionDirection::Left;
+    }
+    if ball_center.y <= broquinho_center.y && x_is_in {
+        return CollisionDirection::Down;
+    }
+    if ball_center.y > broquinho_center.y && x_is_in {
+        return CollisionDirection::Top;
+    }
+
+    CollisionDirection::Down
+}
+
 fn solve_collisions(
     colliding_broquinhos_indexes: Vec<HitResult>,
     ball: &mut Ball,
     broquinho_vec: &mut Vec<Broquinho>,
-    paddle: &Paddle,
     damage: i16,
 ) {
+    let mut do_once = true;
     for collision in colliding_broquinhos_indexes {
-        ball.ricochet(collision.1);
+        if do_once {
+            ball.ricochet(collision.1);
+            do_once = false;
+        }
         let broquinho_life = broquinho_vec[collision.0].get_life();
-        if (damage < broquinho_life) {
+        if damage < broquinho_life {
             broquinho_vec[collision.0].set_life(broquinho_life - damage);
         } else {
             broquinho_vec[collision.0].set_life(0);

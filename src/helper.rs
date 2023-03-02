@@ -26,6 +26,7 @@ pub struct CanvasSize {
     pub WIDTH: f32,
 }
 
+#[derive(Debug)]
 pub struct HitResult(pub usize, pub CollisionDirection);
 
 pub enum MovementDirection {
@@ -33,6 +34,7 @@ pub enum MovementDirection {
     Left,
 }
 
+#[derive(Debug)]
 pub enum CollisionDirection {
     Left,
     Right,

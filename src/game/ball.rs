@@ -3,6 +3,7 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 use helper::{CollisionDirection, Position};
+use macroquad::rand::RandomRange;
 
 #[derive(Debug, Clone)]
 pub struct Ball {
@@ -11,6 +12,7 @@ pub struct Ball {
     radius: f32,
     broquinho_size: f32,
     pos: Position<u16>,
+    //rng: ThreadRng,
 }
 
 impl Ball {
@@ -26,6 +28,7 @@ impl Ball {
             radius: (radius),
             broquinho_size: (broquinho_size),
             pos: (helper::screen_pos_to_pos(screen_pos, broquinho_size)),
+            //rng: rand::thread_rng(),
         }
     }
 
@@ -56,18 +59,23 @@ impl Ball {
     }
 
     pub fn ricochet(&mut self, collision_direction: CollisionDirection) {
+        let random_noise: f32 = RandomRange::gen_range(-5.0, 5.0);
         match collision_direction {
             CollisionDirection::Left => {
-                self.velocity.x *= -1.0;
+                self.velocity.x = self.velocity.x.abs();
+                self.velocity.y += random_noise;
             }
             CollisionDirection::Right => {
-                self.velocity.x *= -1.0;
+                self.velocity.x = -self.velocity.x.abs();
+                self.velocity.y += random_noise;
             }
             CollisionDirection::Down => {
-                self.velocity.y *= -1.0;
+                self.velocity.x += random_noise;
+                self.velocity.y = -self.velocity.y.abs();
             }
             CollisionDirection::Top => {
-                self.velocity.y *= -1.0;
+                self.velocity.x += random_noise;
+                self.velocity.y = self.velocity.y.abs();
             }
         }
     }
