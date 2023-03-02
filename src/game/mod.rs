@@ -63,6 +63,10 @@ impl Game {
             .move_paddle(MovementDirection::Right, delta_time);
     }
 
+    pub fn get_broquinho_at(&self, idx: usize) -> &Broquinho {
+        &self.broquinho_vec[idx]
+    }
+
     pub fn move_left(&mut self, delta_time: &f32) {
         self.paddle.move_paddle(MovementDirection::Left, delta_time);
     }
@@ -87,7 +91,7 @@ impl Game {
         self.paddle.process(delta_time);
         self.ball.process(delta_time);
 
-        let neighbor_broquinhos_indexes = get_neighbor_cells(self.clone());
+        let neighbor_broquinhos_indexes = get_neighbor_cells(&self);
         check_collision(
             &mut self.ball,
             &mut self.broquinho_vec,
@@ -105,7 +109,7 @@ fn calculate_num_of_cols(canvas_size: CanvasSize, broquinho_size: f32) -> u16 {
     (canvas_size.HEIGHT - SAFE_PADDLE_ZONE) as u16 / broquinho_size as u16
 }
 
-pub fn get_neighbor_cells(game: Game) -> Vec<u32> {
+pub fn get_neighbor_cells(game: &Game) -> Vec<u32> {
     let mut neighbor_broquinhos_indexes: Vec<u32> = vec![];
     let pos = game.ball.get_pos();
     for y in 0..=2 {
@@ -144,7 +148,7 @@ fn check_collision(
     paddle: &Paddle,
 ) {
     if neighbor_broquinhos_indexes.len() > 2 {
-        ball.ricocchet(CollisionDirection::Top);
+        //ball.ricocchet(CollisionDirection::Top);
         return;
     }
 

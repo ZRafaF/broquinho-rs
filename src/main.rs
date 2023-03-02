@@ -51,8 +51,8 @@ async fn main() {
                 Broquinho::new(
                     Position { x: (i), y: (j) },
                     Position {
-                        x: (i as f32 * broquinho_size) + (broquinho_size / 2.0),
-                        y: (j as f32 * broquinho_size) + (broquinho_size / 2.0),
+                        x: (i as f32 * broquinho_size),
+                        y: (j as f32 * broquinho_size),
                     },
                     5,
                 );
@@ -101,8 +101,8 @@ async fn main() {
         for broquinho in game.broquinho_vec.iter() {
             // Draw the broquinho it self
             draw_rectangle(
-                broquinho.get_screen_pos().x - (broquinho_size / 2.0),
-                broquinho.get_screen_pos().y - (broquinho_size / 2.0),
+                broquinho.get_screen_pos().x,
+                broquinho.get_screen_pos().y,
                 broquinho_size,
                 broquinho_size,
                 BLUE,
@@ -110,8 +110,8 @@ async fn main() {
 
             // Draw outline
             draw_rectangle_lines(
-                broquinho.get_screen_pos().x - (broquinho_size / 2.0),
-                broquinho.get_screen_pos().y - (broquinho_size / 2.0),
+                broquinho.get_screen_pos().x,
+                broquinho.get_screen_pos().y,
                 broquinho_size,
                 broquinho_size,
                 BROQUINHO_OUTLINE_THICKNESS,
@@ -120,25 +120,24 @@ async fn main() {
 
             // Draw center of the cube
             draw_circle(
-                broquinho.get_screen_pos().x,
-                broquinho.get_screen_pos().y,
+                broquinho.get_screen_pos().x + (broquinho_size / 2.0),
+                broquinho.get_screen_pos().y + (broquinho_size / 2.0),
                 1.0,
                 RED,
             )
         }
 
-        //let neighbor_broquinhos: Vec<&Broquinho> = game::get_neighbor_cells(&game);
-        /*
-        for broquinho in neighbor_broquinhos.iter() {
+        let neighbor_broquinhos_indexes: Vec<u32> = game::get_neighbor_cells(&game);
+        for idx in neighbor_broquinhos_indexes.iter() {
+            let broquinho = game.get_broquinho_at(*idx as usize);
             draw_rectangle(
-                broquinho.get_screen_pos().x - (broquinho_size / 2.0),
-                broquinho.get_screen_pos().y - (broquinho_size / 2.0),
+                broquinho.get_screen_pos().x,
+                broquinho.get_screen_pos().y,
                 broquinho_size,
                 broquinho_size,
                 RED,
             );
         }
-        */
 
         draw_circle(
             game.ball.get_screen_pos().x,
