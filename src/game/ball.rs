@@ -12,7 +12,7 @@ pub struct Ball {
     radius: f32,
     broquinho_size: f32,
     pos: Position<u16>,
-    //rng: ThreadRng,
+    damage: f32,
 }
 
 impl Ball {
@@ -21,6 +21,7 @@ impl Ball {
         velocity: Position<f32>,
         radius: f32,
         broquinho_size: f32,
+        damage: f32,
     ) -> Self {
         Ball {
             screen_pos: (screen_pos),
@@ -28,7 +29,7 @@ impl Ball {
             radius: (radius),
             broquinho_size: (broquinho_size),
             pos: (helper::screen_pos_to_pos(screen_pos, broquinho_size)),
-            //rng: rand::thread_rng(),
+            damage: damage,
         }
     }
 
@@ -49,6 +50,10 @@ impl Ball {
         self.radius
     }
 
+    pub fn get_damage(&self) -> f32 {
+        self.damage
+    }
+
     pub fn process(&mut self, delta_time: &f32) {
         let delta_pos = Position {
             x: { self.velocity.x * delta_time },
@@ -59,25 +64,29 @@ impl Ball {
         self.pos = helper::screen_pos_to_pos(self.screen_pos, self.broquinho_size);
     }
 
+    pub fn set_velocity(&mut self, new_velocity: Position<f32>) {
+        self.velocity = new_velocity;
+    }
+
     pub fn ricochet(&mut self, collision_direction: &CollisionDirection) {
         let random_noise: f32 = RandomRange::gen_range(-5.0, 5.0);
         match collision_direction {
-            CollisionDirection::Left => {
-                self.velocity.x = self.velocity.x.abs();
-                self.velocity.y += random_noise;
-            }
-            CollisionDirection::Right => {
-                self.velocity.x = -self.velocity.x.abs();
-                self.velocity.y += random_noise;
-            }
-            CollisionDirection::Down => {
-                self.velocity.x += random_noise;
-                self.velocity.y = -self.velocity.y.abs();
-            }
-            CollisionDirection::Top => {
-                self.velocity.x += random_noise;
-                self.velocity.y = self.velocity.y.abs();
-            }
+            CollisionDirection::Left => self.set_velocity(Position {
+                x: (self.velocity.x.abs()),
+                y: (self.velocity.y + random_noise),
+            }),
+            CollisionDirection::Right => self.set_velocity(Position {
+                x: (-self.velocity.x.abs()),
+                y: (self.velocity.y + random_noise),
+            }),
+            CollisionDirection::Down => self.set_velocity(Position {
+                x: (self.velocity.x + random_noise),
+                y: (-self.velocity.y.abs()),
+            }),
+            CollisionDirection::Top => self.set_velocity(Position {
+                x: (self.velocity.x + random_noise),
+                y: (self.velocity.y.abs()),
+            }),
         }
     }
 }

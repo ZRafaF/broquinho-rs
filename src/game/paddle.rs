@@ -4,8 +4,8 @@
 // https://opensource.org/licenses/MIT
 use helper::*;
 
-const MAX_PADDLE_SPEED: f32 = 500.0;
-const PADDLE_ACCELERATION: f32 = 900.0;
+const MAX_PADDLE_SPEED: f32 = 400.0;
+const PADDLE_ACCELERATION: f32 = 1300.0;
 
 #[derive(Debug, Clone)]
 pub struct Paddle {

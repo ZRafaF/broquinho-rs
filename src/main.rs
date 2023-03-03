@@ -9,11 +9,11 @@ use helper::*;
 
 use macroquad::prelude::*;
 
-const BROQUINHOS_PER_ROW: u16 = 51;
-
-// GRAPHICS OPTIONS
+const BROQUINHOS_PER_ROW: u16 = 31;
 
 const BROQUINHO_OUTLINE_THICKNESS: f32 = 1.0;
+
+const STARTING_LIFE: f32 = 15.0;
 
 const CANVAS_SIZE: CanvasSize = CanvasSize {
     height: 600.0,
@@ -36,7 +36,7 @@ async fn main() {
     let broquinho_size = game.get_broquinho_size();
     let mut broquinhos_vector: Vec<Broquinho> =
         vec![
-            Broquinho::new(Position { x: (0.0), y: (0.0) }, 1);
+            Broquinho::new(Position { x: (0.0), y: (0.0) }, STARTING_LIFE);
             BROQUINHOS_PER_ROW as usize * game.get_num_of_cols() as usize
         ];
 
@@ -49,12 +49,10 @@ async fn main() {
                         x: (i as f32 * broquinho_size),
                         y: (j as f32 * broquinho_size),
                     },
-                    10,
+                    STARTING_LIFE,
                 );
         }
     }
-
-    println!("Broquinho size: {}", broquinho_size);
 
     game.set_broquinho_vec(broquinhos_vector);
     loop {
@@ -68,13 +66,16 @@ async fn main() {
             game.move_right(&delta_time);
         }
 
+        let (mouse_x, mouse_y) = mouse_position();
         if is_mouse_button_down(MouseButton::Left) {
-            let (mouse_x, mouse_y) = mouse_position();
             if mouse_x < CANVAS_SIZE.width / 2.0 {
                 game.move_left(&delta_time);
             } else {
                 game.move_right(&delta_time);
             }
+        }
+
+        if is_key_down(KeyCode::R) || is_key_down(KeyCode::Right) {
             game.ball.set_screen_pos(Position {
                 x: (mouse_x),
                 y: (mouse_y),
@@ -94,16 +95,21 @@ async fn main() {
         );
 
         for broquinho in game.broquinho_vec.iter() {
-            if broquinho.get_life() == 0 {
+            if broquinho.get_life() == 0.0 {
                 continue;
             }
             // Draw the broquinho it self
             draw_rectangle(
-                broquinho.get_screen_pos().x,
-                broquinho.get_screen_pos().y,
-                broquinho_size,
-                broquinho_size,
-                BLUE,
+                broquinho.get_screen_pos().x + BROQUINHO_OUTLINE_THICKNESS,
+                broquinho.get_screen_pos().y + BROQUINHO_OUTLINE_THICKNESS,
+                broquinho_size - (BROQUINHO_OUTLINE_THICKNESS * 2.0),
+                broquinho_size - (BROQUINHO_OUTLINE_THICKNESS * 2.0),
+                Color {
+                    r: (broquinho.get_life() / STARTING_LIFE),
+                    g: (0.6),
+                    b: (1.0),
+                    a: (1.0),
+                },
             );
 
             // Draw outline
