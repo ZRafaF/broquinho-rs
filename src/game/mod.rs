@@ -35,7 +35,7 @@ impl Game {
         let calculated_broquinho_size =
             calculate_broquinhos_size(canvas_size.clone(), broquinhos_per_row);
         Game {
-            paddle: Paddle::new(canvas_size.clone()),
+            paddle: Paddle::new(canvas_size.clone(), 150.0),
             broquinhos_per_row: (broquinhos_per_row),
             broquinho_size: (calculated_broquinho_size),
             num_of_cols: calculate_num_of_cols(canvas_size.clone(), calculated_broquinho_size),
@@ -43,7 +43,7 @@ impl Game {
             ball: Ball::new(
                 Position {
                     x: (canvas_size.width / 2.0),
-                    y: (canvas_size.height - (SAFE_PADDLE_ZONE as f32 / 2.0)),
+                    y: (canvas_size.height - (SAFE_PADDLE_ZONE / 2.0)),
                 },
                 Position {
                     x: (0.0),

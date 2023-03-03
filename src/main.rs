@@ -9,7 +9,7 @@ use helper::*;
 
 use macroquad::prelude::*;
 
-const BROQUINHOS_PER_ROW: u16 = 31;
+const BROQUINHOS_PER_ROW: u16 = 81;
 
 const BROQUINHO_OUTLINE_THICKNESS: f32 = 1.0;
 
@@ -59,18 +59,18 @@ async fn main() {
         let delta_time: f32 = get_frame_time();
         clear_background(GRAY);
 
-        if is_key_down(KeyCode::A) || is_key_down(KeyCode::Left) {
-            game.move_left(&delta_time);
-        }
-        if is_key_down(KeyCode::D) || is_key_down(KeyCode::Right) {
-            game.move_right(&delta_time);
-        }
-
         let (mouse_x, mouse_y) = mouse_position();
         if is_mouse_button_down(MouseButton::Left) {
             if mouse_x < CANVAS_SIZE.width / 2.0 {
                 game.move_left(&delta_time);
             } else {
+                game.move_right(&delta_time);
+            }
+        } else {
+            if is_key_down(KeyCode::A) || is_key_down(KeyCode::Left) {
+                game.move_left(&delta_time);
+            }
+            if is_key_down(KeyCode::D) || is_key_down(KeyCode::Right) {
                 game.move_right(&delta_time);
             }
         }
@@ -98,6 +98,7 @@ async fn main() {
             if broquinho.get_life() == 0.0 {
                 continue;
             }
+
             // Draw the broquinho it self
             draw_rectangle(
                 broquinho.get_screen_pos().x + BROQUINHO_OUTLINE_THICKNESS,

@@ -17,16 +17,17 @@ pub struct Paddle {
 }
 
 impl Paddle {
-    pub fn new(canvas_size: CanvasSize) -> Self {
+    pub fn new(canvas_size: CanvasSize, paddle_length: f32) -> Self {
         Paddle {
             screen_pos: (Position {
                 x: (canvas_size.width / 2.0),
                 y: (canvas_size.height - 5.0),
             }),
-            length: (50.0),
+
             speed: (0.0),
             canvas_size: canvas_size,
             paddle_height: 10.0,
+            length: paddle_length,
         }
     }
 
@@ -56,13 +57,12 @@ impl Paddle {
         let new_position = self.screen_pos.x + delta_position;
         if new_position < 0.0 {
             self.screen_pos.x = 0.0;
-            self.speed *= -0.8;
+            self.speed *= -0.3;
             return;
         }
         if new_position > self.canvas_size.width - self.length {
             self.screen_pos.x = self.canvas_size.width - self.length;
-            self.speed *= -0.8;
-
+            self.speed *= -0.3;
             return;
         }
 
