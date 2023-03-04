@@ -13,7 +13,7 @@ use helper::*;
 
 const SAFE_PADDLE_ZONE: f32 = 150.0; // Size of the zone without blocks
 pub const BALL_RADIUS: f32 = 4.0; // Size of the zone without blocks
-pub const BALL_VELOCITY_ABS: f32 = 550.0;
+pub const BALL_VELOCITY_ABS: f32 = 150.0;
 const PHYSICS_SUB_STEP: u8 = 8;
 
 #[derive(Debug, Clone)]

@@ -6,8 +6,6 @@ mod game;
 use game::broquinho::Broquinho;
 use helper::*;
 use macroquad::prelude::*;
-use memory_stats::memory_stats;
-use std::env;
 
 const BROQUINHOS_PER_ROW: u16 = 81;
 const BROQUINHO_OUTLINE_THICKNESS: f32 = 1.0;
@@ -29,8 +27,6 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)] // Configs of the app
 async fn main() {
-    env::set_var("RUST_BACKTRACE", "1");
-
     let mut game: game::Game = game::Game::new(CANVAS_SIZE.clone(), BROQUINHOS_PER_ROW);
     let broquinho_size = game.get_broquinho_size();
     let mut broquinhos_vector: Vec<Option<Broquinho>> =
@@ -52,17 +48,6 @@ async fn main() {
 
     game.set_broquinho_vec(broquinhos_vector);
     loop {
-        if let Some(usage) = memory_stats() {
-            println!(
-                "physical: {} | virtual: {} | Balls: {} | fps: {}",
-                usage.physical_mem as f32 * 1.25e-7,
-                usage.virtual_mem as f32 * 1.25e-7,
-                game.balls_vec.len(),
-                get_fps()
-            );
-        } else {
-            println!("Couldn't get the current memory usage :(");
-        }
         let delta_time: f32 = get_frame_time();
         clear_background(GRAY);
 
