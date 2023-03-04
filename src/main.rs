@@ -34,23 +34,20 @@ fn window_conf() -> Conf {
 async fn main() {
     let mut game: game::Game = game::Game::new(CANVAS_SIZE.clone(), BROQUINHOS_PER_ROW);
     let broquinho_size = game.get_broquinho_size();
-    let mut broquinhos_vector: Vec<Broquinho> =
-        vec![
-            Broquinho::new(Position { x: (0.0), y: (0.0) }, STARTING_LIFE);
-            BROQUINHOS_PER_ROW as usize * game.get_num_of_cols() as usize
-        ];
+    let mut broquinhos_vector: Vec<Option<Broquinho>> =
+        vec![None; BROQUINHOS_PER_ROW as usize * game.get_num_of_cols() as usize];
 
     for i in 0..BROQUINHOS_PER_ROW {
         for j in 0..game.get_num_of_cols() {
             broquinhos_vector
                 [pos_to_1d(&Position { x: (i), y: (j) }, BROQUINHOS_PER_ROW) as usize] =
-                Broquinho::new(
+                Some(Broquinho::new(
                     Position {
                         x: (i as f32 * broquinho_size),
                         y: (j as f32 * broquinho_size),
                     },
                     STARTING_LIFE,
-                );
+                ));
         }
     }
 
@@ -95,18 +92,20 @@ async fn main() {
         );
 
         for broquinho in game.broquinho_vec.iter() {
-            if broquinho.get_life() == 0.0 {
+            if broquinho.is_none() {
                 continue;
             }
 
+            let broquinho_true = broquinho.as_ref().unwrap();
+
             // Draw the broquinho it self
             draw_rectangle(
-                broquinho.get_screen_pos().x + BROQUINHO_OUTLINE_THICKNESS,
-                broquinho.get_screen_pos().y + BROQUINHO_OUTLINE_THICKNESS,
+                broquinho_true.get_screen_pos().x + BROQUINHO_OUTLINE_THICKNESS,
+                broquinho_true.get_screen_pos().y + BROQUINHO_OUTLINE_THICKNESS,
                 broquinho_size - (BROQUINHO_OUTLINE_THICKNESS * 2.0),
                 broquinho_size - (BROQUINHO_OUTLINE_THICKNESS * 2.0),
                 Color {
-                    r: (broquinho.get_life() / STARTING_LIFE),
+                    r: (broquinho_true.get_life() / STARTING_LIFE),
                     g: (0.6),
                     b: (1.0),
                     a: (1.0),
@@ -115,8 +114,8 @@ async fn main() {
 
             // Draw outline
             draw_rectangle_lines(
-                broquinho.get_screen_pos().x,
-                broquinho.get_screen_pos().y,
+                broquinho_true.get_screen_pos().x,
+                broquinho_true.get_screen_pos().y,
                 broquinho_size,
                 broquinho_size,
                 BROQUINHO_OUTLINE_THICKNESS,

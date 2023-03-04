@@ -21,7 +21,7 @@ const BALL_VELOCITY_ABS: f32 = 150.0;
 
 #[derive(Debug, Clone)]
 pub struct Game {
-    pub broquinho_vec: Vec<Broquinho>,
+    pub broquinho_vec: Vec<Option<Broquinho>>,
     pub ball: Ball,
     pub paddle: Paddle,
     broquinhos_per_row: u16, // Defines the size of the broquinhos
@@ -63,7 +63,7 @@ impl Game {
     }
 
     #[allow(dead_code)]
-    pub fn get_broquinho_at(&self, idx: usize) -> &Broquinho {
+    pub fn get_broquinho_at(&self, idx: usize) -> &Option<Broquinho> {
         &self.broquinho_vec[idx]
     }
 
@@ -79,7 +79,7 @@ impl Game {
         self.num_of_cols
     }
 
-    pub fn set_broquinho_vec(&mut self, new_broquinho_vec: Vec<Broquinho>) {
+    pub fn set_broquinho_vec(&mut self, new_broquinho_vec: Vec<Option<Broquinho>>) {
         self.broquinho_vec = new_broquinho_vec;
     }
 
@@ -140,7 +140,7 @@ pub fn get_neighbor_cells(game: &Game) -> Vec<u32> {
             if neighbor_pos_1d as usize >= game.broquinho_vec.len() {
                 continue;
             }
-            if game.broquinho_vec[neighbor_pos_1d as usize].get_life() == 0.0 {
+            if game.broquinho_vec[neighbor_pos_1d as usize].is_none() {
                 continue;
             }
             neighbor_broquinhos_indexes.push(neighbor_pos_1d)
@@ -151,7 +151,7 @@ pub fn get_neighbor_cells(game: &Game) -> Vec<u32> {
 
 fn check_collision(
     ball: &mut Ball,
-    broquinho_vec: &mut Vec<Broquinho>,
+    broquinho_vec: &mut Vec<Option<Broquinho>>,
     neighbor_broquinhos_indexes: Vec<u32>,
     paddle: &Paddle,
     broquinho_size: f32,
@@ -197,7 +197,7 @@ fn check_collision(
     // Checking neighboring broquinho
     for idx in neighbor_broquinhos_indexes {
         let usize_idx = idx as usize;
-        let broquinho = &broquinho_vec[usize_idx];
+        let broquinho = &broquinho_vec[usize_idx].as_ref().unwrap();
 
         if ball_screen_pos.y - ball_radius < broquinho.get_screen_pos().y + broquinho_size
             && ball_screen_pos.y + ball_radius > broquinho.get_screen_pos().y
@@ -251,7 +251,7 @@ fn calculate_collision_direction(
 fn solve_collisions(
     colliding_broquinhos_indexes: Vec<HitResult>,
     ball: &mut Ball,
-    broquinho_vec: &mut Vec<Broquinho>,
+    broquinho_vec: &mut Vec<Option<Broquinho>>,
 ) {
     //! Here im using only the first hitResult even though im passing a vector
     //! You can add a solver for multiple hits at once easily
@@ -260,12 +260,13 @@ fn solve_collisions(
         let ball_damage = ball.get_damage();
 
         let collision = &colliding_broquinhos_indexes[0];
+        let broquinho = broquinho_vec[collision.0].as_mut().unwrap();
         ball.ricochet(&collision.1);
-        let broquinho_life = broquinho_vec[collision.0].get_life();
+        let broquinho_life = broquinho.get_life();
         if ball_damage < broquinho_life {
-            broquinho_vec[collision.0].set_life(broquinho_life - ball_damage);
+            broquinho.set_life(broquinho_life - ball_damage);
         } else {
-            broquinho_vec[collision.0].set_life(0.0);
+            broquinho_vec[collision.0] = None;
         }
     }
 }
