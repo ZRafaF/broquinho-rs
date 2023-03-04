@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 macroquad = "0.3"
+memory-stats = "1.1.0"
 
 [lib]
 name = "helper"

@@ -4,17 +4,14 @@
 
 mod game;
 use game::broquinho::Broquinho;
-
 use helper::*;
-
 use macroquad::prelude::*;
+use memory_stats::memory_stats;
+use std::env;
 
 const BROQUINHOS_PER_ROW: u16 = 81;
-
 const BROQUINHO_OUTLINE_THICKNESS: f32 = 1.0;
-
 const STARTING_LIFE: f32 = 15.0;
-
 const CANVAS_SIZE: CanvasSize = CanvasSize {
     height: 600.0,
     width: 800.0,
@@ -32,13 +29,15 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)] // Configs of the app
 async fn main() {
+    env::set_var("RUST_BACKTRACE", "1");
+
     let mut game: game::Game = game::Game::new(CANVAS_SIZE.clone(), BROQUINHOS_PER_ROW);
     let broquinho_size = game.get_broquinho_size();
     let mut broquinhos_vector: Vec<Option<Broquinho>> =
         vec![None; BROQUINHOS_PER_ROW as usize * game.get_num_of_cols() as usize];
 
     for i in 0..BROQUINHOS_PER_ROW {
-        for j in 0..game.get_num_of_cols() {
+        for j in 3..game.get_num_of_cols() {
             broquinhos_vector
                 [pos_to_1d(&Position { x: (i), y: (j) }, BROQUINHOS_PER_ROW) as usize] =
                 Some(Broquinho::new(
@@ -53,6 +52,17 @@ async fn main() {
 
     game.set_broquinho_vec(broquinhos_vector);
     loop {
+        if let Some(usage) = memory_stats() {
+            println!(
+                "physical: {} | virtual: {} | Balls: {} | fps: {}",
+                usage.physical_mem as f32 * 1.25e-7,
+                usage.virtual_mem as f32 * 1.25e-7,
+                game.balls_vec.len(),
+                get_fps()
+            );
+        } else {
+            println!("Couldn't get the current memory usage :(");
+        }
         let delta_time: f32 = get_frame_time();
         clear_background(GRAY);
 
@@ -72,11 +82,28 @@ async fn main() {
             }
         }
 
-        if is_key_down(KeyCode::R) || is_key_down(KeyCode::Right) {
-            game.ball.set_screen_pos(Position {
-                x: (mouse_x),
-                y: (mouse_y),
-            });
+        if is_key_down(KeyCode::R) {
+            /*
+            for ball in game.balls_vec.iter() {
+                ball.set_screen_pos(Position {
+                    x: (mouse_x),
+                    y: (mouse_y),
+                });
+            }
+            */
+            game.create_ball(game::ball::Ball::new(
+                Position {
+                    x: (mouse_x),
+                    y: (mouse_y),
+                },
+                Position {
+                    x: (0.0),
+                    y: (game::BALL_VELOCITY_ABS),
+                },
+                game::BALL_RADIUS,
+                broquinho_size,
+                15.0,
+            ))
         }
 
         game.process(&delta_time);
@@ -146,13 +173,14 @@ async fn main() {
             );
         }
         */
-
-        draw_circle(
-            game.ball.get_screen_pos().x,
-            game.ball.get_screen_pos().y,
-            game.ball.get_radius(),
-            YELLOW,
-        );
+        for ball in game.balls_vec.iter() {
+            draw_circle(
+                ball.get_screen_pos().x,
+                ball.get_screen_pos().y,
+                ball.get_radius(),
+                YELLOW,
+            );
+        }
         next_frame().await
     }
 }

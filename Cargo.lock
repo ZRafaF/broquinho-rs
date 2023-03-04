@@ -54,6 +54,7 @@ name = "broquinho-rs"
 version = "0.1.0"
 dependencies = [
  "macroquad",
+ "memory-stats",
 ]
 
 [[package]]
@@ -229,6 +230,16 @@ name = "maybe-uninit"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "60302e4db3a61da70c0cb7991976248362f30319e88850c487b9b95bbf059e00"
+
+[[package]]
+name = "memory-stats"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "34f79cf9964c5c9545493acda1263f1912f8d2c56c8a2ffee2606cb960acaacc"
+dependencies = [
+ "libc",
+ "winapi",
+]
 
 [[package]]
 name = "miniquad"

@@ -13,6 +13,7 @@ pub struct Ball {
     broquinho_size: f32,
     pos: Position<u16>,
     damage: f32,
+    last_broquinho_index_hit: usize,
 }
 
 impl Ball {
@@ -30,6 +31,7 @@ impl Ball {
             broquinho_size: (broquinho_size),
             pos: (helper::screen_pos_to_pos(screen_pos, broquinho_size)),
             damage: damage,
+            last_broquinho_index_hit: std::usize::MAX,
         }
     }
 
@@ -54,13 +56,23 @@ impl Ball {
         self.damage
     }
 
+    #[allow(dead_code)]
+    pub fn get_last_hit_index(&self) -> usize {
+        self.last_broquinho_index_hit
+    }
+
+    #[allow(dead_code)]
+    pub fn set_last_hit_index(&mut self, idx: usize) {
+        self.last_broquinho_index_hit = idx;
+    }
+
     pub fn process(&mut self, delta_time: &f32) {
         let delta_pos = Position {
             x: { self.velocity.x * delta_time },
             y: { self.velocity.y * delta_time },
         };
         let new_pos = delta_pos + self.screen_pos;
-        self.screen_pos = new_pos;
+        self.set_screen_pos(new_pos);
         self.pos = helper::screen_pos_to_pos(self.screen_pos, self.broquinho_size);
     }
 
