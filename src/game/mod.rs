@@ -17,7 +17,7 @@ use helper::*;
 
 const SAFE_PADDLE_ZONE: f32 = 150.0; // Size of the zone without blocks
 const BALL_RADIUS: f32 = 4.0; // Size of the zone without blocks
-const BALL_VELOCITY_ABS: f32 = 150.0;
+const BALL_VELOCITY_ABS: f32 = 350.0;
 
 #[derive(Debug, Clone)]
 pub struct Game {
